@@ -22,8 +22,37 @@ try {
     ${mainCss ? `<link rel="stylesheet" href="/assets/${mainCss}" />` : ""}
   </head>
   <body data-react-root="true">
-    <div id="root"></div>
+    <!--$--><!--$--><!--/$--><!--/$-->
+    <section aria-label="Notifications alt+T" tabindex="-1" aria-live="polite" aria-relevant="additions text" aria-atomic="false" data-react-aria-top-layer="true"></section>
+    <script>
+      (self.$R = self.$R || {})["tsr"] = [];
+      self.$_TSR = {
+        h() { this.hydrated = true; this.c(); },
+        e() { this.streamEnded = true; this.c(); },
+        c() {
+          if (this.hydrated && this.streamEnded) {
+            delete self.$_TSR;
+            delete self.$R.tsr;
+          }
+        },
+        p(e) { this.initialized ? e() : this.buffer.push(e); },
+        buffer: []
+      };
+      self.$_TSR.router = {
+        manifest: { routes: {} },
+        matches: [
+          { i: "__root__#", u: Date.now(), s: "success", ssr: true },
+          { i: "#_authed#", u: Date.now(), s: "pending", ssr: false }
+        ],
+        dehydratedData: {}
+      };
+    </script>
     ${mainJs ? `<script type="module" src="/assets/${mainJs}"></script>` : ""}
+    <script>
+      if (self.$_TSR && self.$_TSR.e) {
+        self.$_TSR.e();
+      }
+    </script>
   </body>
 </html>
 `;
