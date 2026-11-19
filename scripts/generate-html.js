@@ -20,6 +20,14 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" />
     ${mainCss ? `<link rel="stylesheet" href="/assets/${mainCss}" />` : ""}
+    <script>
+      window.addEventListener('error', function (e) {
+        console.error('[HealthOS Window Error]:', e.error || e.message);
+      });
+      window.addEventListener('unhandledrejection', function (e) {
+        console.error('[HealthOS Unhandled Rejection]:', e.reason);
+      });
+    </script>
   </head>
   <body data-react-root="true">
     <!--$--><!--$--><!--/$--><!--/$-->
@@ -27,32 +35,43 @@ try {
     <script>
       (self.$R = self.$R || {})["tsr"] = [];
       self.$_TSR = {
-        h() { this.hydrated = true; this.c(); },
-        e() { this.streamEnded = true; this.c(); },
-        c() {
-          if (this.hydrated && this.streamEnded) {
-            delete self.$_TSR;
-            delete self.$R.tsr;
-          }
-        },
+        h() { this.hydrated = true; },
+        e() { this.streamEnded = true; },
+        c() {},
         p(e) { this.initialized ? e() : this.buffer.push(e); },
         buffer: []
       };
+
+      var queryStream = (typeof ReadableStream !== 'undefined')
+        ? new ReadableStream({
+            start(controller) {
+              controller.close();
+            }
+          })
+        : {
+            getReader() {
+              return {
+                read() { return Promise.resolve({ done: true }); },
+                releaseLock() {}
+              };
+            },
+            cancel() { return Promise.resolve(); }
+          };
+
       self.$_TSR.router = {
         manifest: { routes: {} },
         matches: [
           { i: "__root__#", u: Date.now(), s: "success", ssr: true },
           { i: "#_authed#", u: Date.now(), s: "pending", ssr: false }
         ],
-        dehydratedData: {}
+        dehydratedData: {
+          query: {
+            stream: queryStream
+          }
+        }
       };
     </script>
     ${mainJs ? `<script type="module" src="/assets/${mainJs}"></script>` : ""}
-    <script>
-      if (self.$_TSR && self.$_TSR.e) {
-        self.$_TSR.e();
-      }
-    </script>
   </body>
 </html>
 `;
